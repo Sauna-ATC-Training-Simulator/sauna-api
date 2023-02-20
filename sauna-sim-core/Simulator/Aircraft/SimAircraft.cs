@@ -102,6 +102,7 @@ namespace SaunaSim.Core.Simulator.Aircraft
         }
 
         // Assigned values
+        public AircraftAutopilot Autopilot { get; private set; }
         public AircraftControl Control { get; private set; }
         public int Assigned_IAS { get; set; } = -1;
         public ConstraintType Assigned_IAS_Type { get; set; } = ConstraintType.FREE;

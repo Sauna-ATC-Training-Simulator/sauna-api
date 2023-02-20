@@ -196,9 +196,9 @@ namespace SaunaSim.Core.Simulator.Aircraft
         }
 
         public double VerticalSpeed { get; set; }
-        public double Velocity_X_MPerS => (MathUtil.ConvertNauticalMilesToMeters(GroundSpeed) / 3600) * Math.Sin(MathUtil.ConvertDegreesToRadians(Track_True));
+        public double Velocity_X_MPerS => MathUtil.ConvertKtsToMpers(GroundSpeed) * Math.Sin(MathUtil.ConvertDegreesToRadians(Track_True));
         public double Velocity_Y_MPerS => MathUtil.ConvertFeetToMeters(VerticalSpeed) / 60;
-         public double Velocity_Z_MPerS => (MathUtil.ConvertNauticalMilesToMeters(GroundSpeed) / 3600) * Math.Cos(MathUtil.ConvertDegreesToRadians(Track_True));
+         public double Velocity_Z_MPerS => MathUtil.ConvertKtsToMpers(GroundSpeed) * Math.Cos(MathUtil.ConvertDegreesToRadians(Track_True));
         public double WindDirection { get; private set; }
         public double WindSpeed { get; private set; }
 
@@ -311,7 +311,6 @@ namespace SaunaSim.Core.Simulator.Aircraft
 
             GribPoint = tile.GetClosestPoint(PositionGeoPoint);
         }
-
         
     }
 }
