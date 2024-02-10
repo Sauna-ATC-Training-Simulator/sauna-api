@@ -17,27 +17,9 @@ namespace SaunaSim.Core.Simulator.Aircraft.FMS.Legs
         private Bearing _initTrueCourse;
         private Length _legLength;
 
-        public DirectToFixLeg(FmsPoint point, GeoPoint ppos, Bearing curTrueTrack, Velocity gs)
+        public DirectToFixLeg(FmsPoint point)
         {
             _endPoint = point;
-            _trueCourse = AviationUtil.CalculateDirectBearingAfterTurn(
-                    ppos,
-                    _endPoint.Point.PointPosition,
-                    AviationUtil.CalculateRadiusOfTurn(gs, AviationUtil.CalculateMaxBankAngle(gs, Angle.FromDegrees(25), AngularVelocity.FromDegreesPerSecond(3))),
-                    curTrueTrack);
-
-            if (_trueCourse == null)
-            {
-                _trueCourse = GeoPoint.FinalBearing(ppos, _endPoint.Point.PointPosition);
-            }
-
-            // Set start point
-            GeoPoint startPt = (GeoPoint)_endPoint.Point.PointPosition.Clone();
-            startPt.MoveBy(_trueCourse + Angle.FromDegrees(180), GeoPoint.FlatDistance(_endPoint.Point.PointPosition, ppos));
-            _startPoint = new FmsPoint(new RouteWaypoint("*DIRECT", startPt), RoutePointTypeEnum.FLY_OVER);
-
-            _initTrueCourse = GeoPoint.InitialBearing(_startPoint.Point.PointPosition, _endPoint.Point.PointPosition);
-            _legLength = GeoPoint.Distance(_startPoint.Point.PointPosition, _endPoint.Point.PointPosition);
         }
 
         public FmsPoint StartPoint => _startPoint;
@@ -81,10 +63,32 @@ namespace SaunaSim.Core.Simulator.Aircraft.FMS.Legs
 
         public void ProcessLeg(SimAircraft aircraft, int intervalMs)
         {
+            if (_trueCourse == null)
+            {
+                _trueCourse = AviationUtil.CalculateDirectBearingAfterTurn(
+                        aircraft.Position.PositionGeoPoint,
+                        _endPoint.Point.PointPosition,
+                        AviationUtil.CalculateRadiusOfTurn(aircraft.Position.GroundSpeed, AviationUtil.CalculateMaxBankAngle(aircraft.Position.GroundSpeed, Angle.FromDegrees(25), AngularVelocity.FromDegreesPerSecond(3))),
+                        aircraft.Position.Track_True);
+
+                if (_trueCourse == null)
+                {
+                    _trueCourse = GeoPoint.FinalBearing(aircraft.Position.PositionGeoPoint, _endPoint.Point.PointPosition);
+                }
+
+                // Set start point
+                GeoPoint startPt = (GeoPoint)_endPoint.Point.PointPosition.Clone();
+                startPt.MoveBy(_trueCourse + Angle.FromDegrees(180), GeoPoint.FlatDistance(_endPoint.Point.PointPosition, aircraft.Position.PositionGeoPoint));
+                _startPoint = new FmsPoint(new RouteWaypoint("*DIRECT", startPt), RoutePointTypeEnum.FLY_OVER);
+
+                _initTrueCourse = GeoPoint.InitialBearing(_startPoint.Point.PointPosition, _endPoint.Point.PointPosition);
+                _legLength = GeoPoint.Distance(_startPoint.Point.PointPosition, _endPoint.Point.PointPosition);
+            }
         }
 
         public void InitializeLeg(SimAircraft aircraft)
         {
+            
         }
 
         public List<NdLine> UiLines

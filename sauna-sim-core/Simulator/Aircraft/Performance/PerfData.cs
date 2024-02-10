@@ -23,8 +23,10 @@ namespace SaunaSim.Core.Simulator.Aircraft.Performance
         public int DeltaMassVsPenalty_fpm { get; set; }
         public int SpeedBrakeVsPenalty_fpm { get; set; }
         public List<(int, List<(int, PerfDataPoint)>)> DataPoints { get; set; }
+        public List<(int, int)> ApproachSpeedGates { get; set; }
 
         //  Perf Init Data
+        public int V2_KIAS { get; set; }
         public int Climb_KIAS { get; set; }
         public double Climb_Mach { get; set; }
         public int Cruise_KIAS { get; set; }
