@@ -2,6 +2,7 @@
 using AviationCalcUtilNet.Geo;
 using AviationCalcUtilNet.GeoTools;
 using AviationCalcUtilNet.Units;
+using NavData_Interface.Objects.Fixes;
 using SaunaSim.Core.Simulator.Aircraft.Autopilot.Controller;
 using SaunaSim.Core.Simulator.Aircraft.FMS.NavDisplay;
 using System;
@@ -63,6 +64,9 @@ namespace SaunaSim.Core.Simulator.Aircraft.FMS.Legs
                 RadiusM = radiusM;
             }
 
+            public TurnCircle(GeoPoint center, GeoPoint tangentialPointA, GeoPoint tangentialPointB) : this(center, tangentialPointA, tangentialPointB, GeoPoint.Distance(center, tangentialPointA)) 
+            {}
+
             public GeoPoint BisectorIntersection { get; set; }
         }
 
@@ -93,6 +97,20 @@ namespace SaunaSim.Core.Simulator.Aircraft.FMS.Legs
         }
 
         private RfState _legState = RfState.TRACK_TO_RF;
+
+        public RadiusToFixLeg(FmsPoint startPoint, FmsPoint endPoint, Fix centerPoint, Bearing initialTrueCourse, Bearing finalTrueCourse)
+        {
+            _startPoint = startPoint;
+            _endPoint = endPoint;
+            _initialTrueCourse = initialTrueCourse;
+            _finalTrueCourse = finalTrueCourse;
+
+            _turnCircle = new TurnCircle(centerPoint.Location, startPoint.Point.PointPosition, endPoint.Point.PointPosition);
+            
+            // This leg is defined by NavData, so there are no sublegs, just the turn.
+            // _legLength = rfTurnLength
+            (_, _legLength, _) = AviationUtil.CalculateArcCourseIntercept(_turnCircle.TangentialPointA, _turnCircle.Center, InitialTrueCourse, FinalTrueCourse, _turnCircle.RadiusM, isClockwise());
+        }
 
         public RadiusToFixLeg(FmsPoint startPoint, FmsPoint endPoint, Bearing initialTrueCourse, Bearing finalTrueCourse)
         {

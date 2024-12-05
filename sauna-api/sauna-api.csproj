@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>SaunaSim.Api</RootNamespace>
-    <Platforms>x64;x86</Platforms>
+    <Platforms>x64;x86;ARM64</Platforms>
     <ApplicationIcon />
     <OutputType>Exe</OutputType>
     <StartupObject>SaunaSim.Api.Program</StartupObject>
@@ -37,7 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="PShivaraman.AviationCalcUtilNet" Version="2.12.1" />
-    <PackageReference Include="CaspianMerlin.FsdConnectorNet" Version="0.2.26" />
+    <PackageReference Include="CaspianMerlin.FsdConnectorNet" Version="0.2.27" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 

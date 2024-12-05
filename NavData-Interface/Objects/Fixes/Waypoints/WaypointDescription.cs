@@ -24,5 +24,23 @@ namespace NavData_Interface.Objects.Fixes.Waypoints
             this.IsFlyOver = isFlyOver;
             this.IsMissedAppStart = isMissedAppStart;
         }
+        public override string ToString()
+        {
+            List<string> descriptions = new List<string>();
+
+            if (IsEndOfRoute) descriptions.Add("End");
+            if (IsFlyOver) descriptions.Add("Fly Over");
+            if (IsMissedAppStart) descriptions.Add("Missed App Start");
+
+            var final = string.Join(", ", descriptions);
+
+            if (final == "")
+            {
+                final = "-";
+            }
+
+            return $"{final}";
+        }
+
     }
 }

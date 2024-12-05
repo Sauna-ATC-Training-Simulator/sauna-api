@@ -11,6 +11,7 @@ namespace SaunaSim.Core.Simulator.Aircraft.Performance
         {
             PerfData a320 = new PerfData()
             {
+                V2_KIAS = 180,
                 Climb_KIAS = 270,
                 Climb_Mach = 0.73,
                 Cruise_KIAS = 290,
@@ -19,6 +20,13 @@ namespace SaunaSim.Core.Simulator.Aircraft.Performance
                 Descent_Mach = 0.78,
                 Engines = 2,
                 EnginesReverse = true,
+                ApproachSpeedGates = new List<(int, int)>()
+                {
+                    (4, 140),
+                    (6, 160),
+                    (10, 180),
+                    (15, 210)
+                },
                 ConfigList = new List<PerfConfigSetting>()
                 {
                     new PerfConfigSetting()

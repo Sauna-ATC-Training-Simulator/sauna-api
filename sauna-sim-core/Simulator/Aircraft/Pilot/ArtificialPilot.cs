@@ -1,5 +1,6 @@
 ﻿using AviationCalcUtilNet.Units;
 using SaunaSim.Core.Simulator.Aircraft.FMS;
+using SaunaSim.Core.Simulator.Aircraft.Performance;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -127,30 +128,59 @@ namespace SaunaSim.Core.Simulator.Aircraft.Pilot
 
         private void SetConfig()
         {
-            if(_parentAircraft.Fms.PhaseType == FmsPhaseType.CLIMB && _parentAircraft.Fms.FmsSpeedValue >= 210)
+            List<PerfConfigSetting> config = _parentAircraft.PerformanceData.ConfigList;
+            int ias = _parentAircraft.Fms.FmsSpeedValue;
+
+            if(_parentAircraft.Fms.PhaseType == FmsPhaseType.GO_AROUND)
             {
-                _parentAircraft.Data.Config = 0;
+                for (int i = 0; i < config.Count; i++)
+                {
+                    if (!config[i].GearDown)
+                    {
+                        _parentAircraft.Data.Config = i;
+                        Console.WriteLine($"Selected Config: {i}");
+                        return;
+                    }
+                }
             }
-            else if(_parentAircraft.Fms.PhaseType == FmsPhaseType.APPROACH && _parentAircraft.Fms.FmsSpeedValue <= 135)
+            else
             {
-                _parentAircraft.Data.Config = 4;
+                for (int i = 0; i < config.Count; i++)
+                {
+                    if (ias >= config[i].MinKias && ias < config[i].MaxKias)
+                    {
+                        _parentAircraft.Data.Config = i;
+                        Console.WriteLine($"Selected Config: {i}");
+                        return;
+                    }
+                }
             }
-            else if (_parentAircraft.Fms.PhaseType == FmsPhaseType.APPROACH && _parentAircraft.Fms.FmsSpeedValue <= 160)
-            {
-                _parentAircraft.Data.Config = 3;
-            }
-            else if (_parentAircraft.Fms.PhaseType == FmsPhaseType.APPROACH && _parentAircraft.Fms.FmsSpeedValue <= 180)
-            {
-                _parentAircraft.Data.Config = 2;
-            }
-            else if (_parentAircraft.Fms.PhaseType == FmsPhaseType.APPROACH && _parentAircraft.Fms.FmsSpeedValue <= 210)
-            {
-                _parentAircraft.Data.Config = 0;
-            }
-            else if(_parentAircraft.Fms.PhaseType == FmsPhaseType.GO_AROUND && _parentAircraft.Fms.FmsSpeedValue >= 135)
-            {
-                _parentAircraft.Data.Config = 2;
-            }
+            //if (_parentAircraft.Position.IndicatedAirSpeed < )
+
+            //if (_parentAircraft.Fms.PhaseType == FmsPhaseType.CLIMB && _parentAircraft.Fms.FmsSpeedValue >= 210)
+            //{
+            //    _parentAircraft.Data.Config = 0;
+            //}
+            //else if (_parentAircraft.Fms.PhaseType == FmsPhaseType.APPROACH && _parentAircraft.Fms.FmsSpeedValue <= 135)
+            //{
+            //    _parentAircraft.Data.Config = 4;
+            //}
+            //else if (_parentAircraft.Fms.PhaseType == FmsPhaseType.APPROACH && _parentAircraft.Fms.FmsSpeedValue <= 160)
+            //{
+            //    _parentAircraft.Data.Config = 3;
+            //}
+            //else if (_parentAircraft.Fms.PhaseType == FmsPhaseType.APPROACH && _parentAircraft.Fms.FmsSpeedValue <= 180)
+            //{
+            //    _parentAircraft.Data.Config = 2;
+            //}
+            //else if (_parentAircraft.Fms.PhaseType == FmsPhaseType.APPROACH && _parentAircraft.Fms.FmsSpeedValue <= 210)
+            //{
+            //    _parentAircraft.Data.Config = 0;
+            //}
+            //else if (_parentAircraft.Fms.PhaseType == FmsPhaseType.GO_AROUND && _parentAircraft.Fms.FmsSpeedValue >= 135)
+            //{
+            //    _parentAircraft.Data.Config = 2;
+            //}
         }
     }
 }

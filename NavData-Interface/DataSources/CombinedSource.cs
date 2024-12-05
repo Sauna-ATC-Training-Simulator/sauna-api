@@ -3,6 +3,7 @@ using AviationCalcUtilNet.Units;
 using NavData_Interface.Objects;
 using NavData_Interface.Objects.Fixes;
 using NavData_Interface.Objects.LegCollections.Airways;
+using NavData_Interface.Objects.LegCollections.Procedures;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -49,7 +50,6 @@ namespace NavData_Interface.DataSources
         public bool AddSource(DataSource source)
         {
             var lastPriority = _sources.Keys[_sources.Keys.Count - 1];
-
             return AddSource(source, lastPriority);
         }
 
@@ -107,6 +107,19 @@ namespace NavData_Interface.DataSources
 
                     _sources.Add(newPriority, source.Value);
 
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public override bool IsValidAirwayIdentifier(string airwayIdentifier)
+        {
+            foreach (var source in _sources)
+            {
+                if (source.Value.IsValidAirwayIdentifier(airwayIdentifier))
+                {
                     return true;
                 }
             }
@@ -260,6 +273,36 @@ namespace NavData_Interface.DataSources
             foreach (var source in _sources.Values)
             {
                 var airport = source.GetAirportByIdentifier(airportIdentifier);
+
+                if (airport != null)
+                {
+                    return airport;
+                }
+            }
+
+            return null;
+        }
+
+        public override Sid GetSidByAirportAndIdentifier(string airportIdentifier, string sidIdentifier)
+        {
+            foreach (var source in _sources.Values)
+            {
+                var airport = source.GetSidByAirportAndIdentifier(airportIdentifier, sidIdentifier);
+
+                if (airport != null)
+                {
+                    return airport;
+                }
+            }
+
+            return null;
+        }
+
+        public override Star GetStarByAirportAndIdentifier(string airportIdentifier, string sidIdentifier)
+        {
+            foreach (var source in _sources.Values)
+            {
+                var airport = source.GetStarByAirportAndIdentifier(airportIdentifier, sidIdentifier);
 
                 if (airport != null)
                 {

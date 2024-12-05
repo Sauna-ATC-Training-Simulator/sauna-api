@@ -28,7 +28,7 @@ namespace SaunaSim.Api
                     webBuilder.UseStartup<Startup>();
 
                     // Determine port to use
-                    ushort port = 5000;
+                    ushort port = 5052;
                     if (CheckForUserDefinedPort(args, out ushort customPort))
                     {
                         port = customPort;

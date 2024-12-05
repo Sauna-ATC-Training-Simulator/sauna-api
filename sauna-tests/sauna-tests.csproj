@@ -5,7 +5,7 @@
     <RootNamespace>sauna_tests</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-
+    <Platforms>x64;x86;ARM64</Platforms>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -27,5 +27,13 @@
     <None Remove="PShivaraman.AviationCalcUtilNet" />
     <None Remove="Microsoft.AspNetCore.TestHost" />
     <None Remove="Microsoft.AspNetCore.Mvc.Testing" />
+    <None Update="e_dfd_2101.s3db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="WMM.COF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

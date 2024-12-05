@@ -185,6 +185,10 @@ namespace SaunaSim.Core.Simulator.Commands
                         logger($"ERROR: Speed Brake Pos Invalid");
                     }
                     break;
+
+                case "sid":
+                    cmd = new SidCommand();
+                    break;
                 case "config":
                     try
                     {

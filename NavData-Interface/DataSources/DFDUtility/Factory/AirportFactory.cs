@@ -2,14 +2,14 @@
 using NavData_Interface.Objects.Fixes;
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Text;
+using Microsoft.Data.Sqlite;
 
 namespace NavData_Interface.DataSources.DFDUtility.Factory
 {
     internal static class AirportFactory
     {
-        internal static Airport Factory(SQLiteDataReader reader)
+        internal static Airport Factory(SqliteDataReader reader)
         {
             var longest_runway_surface = RunwaySurfaceCode.Undefined;
             

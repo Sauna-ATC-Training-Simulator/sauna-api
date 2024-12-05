@@ -2,14 +2,14 @@
 using NavData_Interface.Objects.Fixes.Navaids;
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Text;
+using Microsoft.Data.Sqlite;
 
 namespace NavData_Interface.DataSources.DFDUtility.Factory
 {
     internal class VhfNavaidFactory
     {
-        internal static VhfNavaid Factory(SQLiteDataReader reader)
+        internal static VhfNavaid Factory(SqliteDataReader reader)
         {
             var dme_location = SQLHelper.locationFromColumns(reader, "dme_latitude", "dme_longitude");
 

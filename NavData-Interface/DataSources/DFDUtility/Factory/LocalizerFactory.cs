@@ -2,13 +2,13 @@
 using AviationCalcUtilNet.Geo;
 using NavData_Interface.Objects;
 using System;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 
 namespace NavData_Interface.DataSources.DFDUtility.Factory
 {
     internal static class LocalizerFactory
     {
-        internal static Localizer Factory(SQLiteDataReader reader)
+        internal static Localizer Factory(SqliteDataReader reader)
         {
             var area_code = reader["area_code"].ToString();
             var icao_code = reader["icao_code"].ToString();

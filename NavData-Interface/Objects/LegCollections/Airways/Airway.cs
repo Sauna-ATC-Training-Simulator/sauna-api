@@ -49,7 +49,7 @@ namespace NavData_Interface.Objects.LegCollections.Airways
                 
                 if (_points[i].Point.Identifier == endFix.Identifier)
                 {
-                    if (_selectedStartPointIndex != -1)
+                    if (_selectedEndPointIndex != -1)
                     {
                         var currentDistance = GeoPoint.FlatDistance(endFix.Location, _points[_selectedEndPointIndex].Point.Location);
                         var newDistance = GeoPoint.FlatDistance(endFix.Location, _points[i].Point.Location);
@@ -73,33 +73,35 @@ namespace NavData_Interface.Objects.LegCollections.Airways
 
             List<Leg> legs = new List<Leg>();
 
-            int increment;
+            var forwards = _selectedEndPointIndex > _selectedStartPointIndex;
 
-            if (_selectedEndPointIndex > _selectedStartPointIndex)
+            for (var i = _selectedStartPointIndex; forwards? i <= _selectedEndPointIndex : i >= _selectedEndPointIndex; i += forwards? 1 : -1)
             {
-                increment = 1;
-            } else
-            {
-                increment = -1;
-            }
+                var legEndPoint = _points[i];
 
-            for (var i = _selectedStartPointIndex; i != _selectedEndPointIndex; i += increment)
-            {
-                var legStartPoint = _points[i];
-                var legEndPoint = _points[i + increment];
-
-                if (legStartPoint.Description.IsEndOfRoute)
+                if (forwards && (legEndPoint.Description.IsEndOfRoute && i != _selectedEndPointIndex) || !forwards && (legEndPoint.Description.IsEndOfRoute && i != _selectedStartPointIndex))
                 {
                     throw new ArgumentException("There is a discontinuity in the airway between these points");
                 }
 
                 legs.Add(
                     new Leg(
-                        LegType.TRACK_TO_FIX,
-                        legStartPoint.Point,
+                        i == _selectedStartPointIndex ? LegType.INITIAL_FIX : LegType.TRACK_TO_FIX,
+                        null,
+                        null,
+                        null,
+                        null,
                         legEndPoint.Point,
-                        legStartPoint.Description,
-                        legEndPoint.Description));
+                        legEndPoint.Description,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                        ));
             }
 
             SelectedLegs = legs;
@@ -107,7 +109,7 @@ namespace NavData_Interface.Objects.LegCollections.Airways
 
         internal Airway(List<AirwayPoint> points) : base()
         {
-            if (_points.Count < 2)
+            if (points.Count < 2)
             {
                 throw new ArgumentException("This airway has too few points!");
             }

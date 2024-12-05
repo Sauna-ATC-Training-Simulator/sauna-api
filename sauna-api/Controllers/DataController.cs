@@ -141,7 +141,7 @@ namespace SaunaSim.Api.Controllers
         [HttpPost("loadEuroscopeScenario")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult LoadEuroscopeScenario(LoadScenarioFileRequest request)
+        public async Task<ActionResult> LoadEuroscopeScenario(LoadScenarioFileRequest request)
         {
             try
             {
@@ -247,59 +247,6 @@ namespace SaunaSim.Api.Controllers
                                 lastPilot.RequestedAlt = reqAlt;
                             } catch (Exception) { }
                         }
-                    } else if (line.StartsWith("$ROUTE"))
-                    {
-                        string[] items = line.Split(':');
-
-                        if (lastPilot != null && items.Length >= 2)
-                        {
-                            string[] waypoints = items[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-                            AircraftBuilder.FactoryFmsWaypoint lastPoint = null;
-
-                            for (int i = 0; i < waypoints.Length; i++)
-                            {
-                                if (waypoints[i].ToLower() == "hold" && lastPoint != null)
-                                {
-                                    lastPoint.ShouldHold = true;
-                                } else
-                                {
-                                    int altRestr = -1;
-                                    if (waypoints[i].Contains("/"))
-                                    {
-                                        var splitWp = waypoints[i].Split("/");
-
-                                        if (splitWp.Length == 2)
-                                        {
-                                            try
-                                            {
-                                                altRestr = int.Parse(splitWp[2]);
-
-                                                waypoints[i] = splitWp[0];
-
-                                            } catch (Exception)
-                                            {
-                                                Console.Error.WriteLine($"Invalid altitude restriction {splitWp[1]}");
-                                                continue;
-                                            }
-                                        } else
-                                        {
-                                            Console.Error.WriteLine($"Invalid waypoint name {waypoints[i]}");
-                                        }
-                                    }
-
-                                    lastPoint = new AircraftBuilder.FactoryFmsWaypoint(waypoints[i]);
-
-                                    if (altRestr >= 0)
-                                    {
-                                        lastPoint.LowerAltitudeConstraint = altRestr;
-                                        lastPoint.UpperAltitudeConstraint = altRestr;
-                                    }
-
-                                    lastPilot.FmsWaypoints.Add(lastPoint);
-                                }
-                            }
-                        }
                     } else if (line.StartsWith("START"))
                     {
                         string[] items = line.Split(':');
@@ -387,12 +334,21 @@ namespace SaunaSim.Api.Controllers
                     }
                 }
 
+                List<Task> tasks = new();
+
                 foreach (AircraftBuilder pilot in pilots)
                 {
-                    var aircraft = pilot.Create(PrivateInfoLoader.GetClientInfo((string msg) => { _logger.LogWarning($"{pilot.Callsign}: {msg}"); }));
-                    _aircraftService.Handler.AddAircraft(aircraft);
-                    aircraft.Start();
+                    tasks.Add(Task.Factory.StartNew(() =>
+                    {
+                        DateTime start = DateTime.UtcNow;
+                        var aircraft = pilot.Create(PrivateInfoLoader.GetClientInfo((string msg) => { _logger.LogWarning($"{pilot.Callsign}: {msg}"); }));
+                        _aircraftService.Handler.AddAircraft(aircraft);
+                        aircraft.Start();
+                        _logger.LogInformation($"{pilot.Callsign} created in {(DateTime.UtcNow - start).TotalMilliseconds}ms");
+                    }));
                 }
+
+                await Task.WhenAll(tasks);
             } catch (Exception ex)
             {
                 return BadRequest(ex.StackTrace);

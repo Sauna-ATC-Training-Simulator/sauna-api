@@ -2,14 +2,14 @@
 using NavData_Interface.Objects.Fixes.Navaids;
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Text;
+using Microsoft.Data.Sqlite;
 
 namespace NavData_Interface.DataSources.DFDUtility.Factory
 {
     internal static class TerminalNdbFactory
     {
-        internal static Ndb Factory(SQLiteDataReader reader)
+        internal static Ndb Factory(SqliteDataReader reader)
         {
             return new Ndb
                 (

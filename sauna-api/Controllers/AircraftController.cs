@@ -79,9 +79,10 @@ namespace SaunaSim.Api.Controllers
                     IsSpeedMach = request.Position.IsMachNumber
                 };
 
+                // TODO: VERY IMPORTANT this parameter is no longer needed!!!!! or used!!!!!!
                 if (request.FmsWaypointList != null)
                 {
-                    builder.FmsWaypoints = request.FmsWaypointList;
+                    //builder.FmsWaypoints = request.FmsWaypointList;
                 }
 
                 var pilot = builder.Create(PrivateInfoLoader.GetClientInfo((string msg) => { _logger.LogWarning($"{request.Callsign}: {msg}"); }));

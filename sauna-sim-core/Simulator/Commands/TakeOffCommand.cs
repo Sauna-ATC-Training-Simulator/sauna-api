@@ -24,6 +24,9 @@ namespace SaunaSim.Core.Simulator.Commands
         private Localizer _loc;
         private IRoutePoint _locRoutePoint;
         private MagneticTileManager _magTileMgr;
+        private IAircraftCommand _targetWaypoint;
+        
+        private Fix waypoint;
 
         public TakeOffCommand(MagneticTileManager magTileMgr)
         {
@@ -51,11 +54,15 @@ namespace SaunaSim.Core.Simulator.Commands
             }
 
             Aircraft.GroundHandler.GroundPhase = GroundPhaseType.TAKEOFF;
-            //Aircraft.Autopilot.AddArmedLateralMode(LateralModeType.LNAV);
-            //Aircraft.Autopilot.AddArmedVerticalMode(VerticalModeType.APCH);
 
-            // Add event handler
-            //Aircraft.Fms.WaypointPassed += OnLanded;
+            if(waypoint != null)
+            {
+                RouteWaypoint rwp = new RouteWaypoint(waypoint);
+
+                Aircraft.Fms.ActivateDirectTo(rwp);
+
+                Aircraft.Autopilot.AddArmedLateralMode(LateralModeType.LNAV);
+            }
         }
 
         public bool HandleCommand(ref List<string> args)
@@ -69,7 +76,7 @@ namespace SaunaSim.Core.Simulator.Commands
 
             // Get runway string
             string rwyStr = args[0];
-
+            
             args.RemoveAt(0);
 
             // Find Waypoint
@@ -83,7 +90,22 @@ namespace SaunaSim.Core.Simulator.Commands
 
             _loc = wp;
 
-            Logger?.Invoke($"{Aircraft.Callsign} Taking off Runway {rwyStr}");
+            if (args.Count >= 1) 
+            {
+                string waypointStr = args[0];
+                waypoint = DataHandler.GetClosestWaypointByIdentifier(waypointStr, Aircraft.Position.PositionGeoPoint);
+                
+                if(waypoint == null)
+                {
+                    Logger?.Invoke($"ERROR: Waypoint {waypointStr} not found!");
+                    return false;
+                }                
+                Logger?.Invoke($"{Aircraft.Callsign} Taking off Runway {rwyStr} with route to {waypointStr}.");
+            }
+            else
+            {
+                Logger?.Invoke($"{Aircraft.Callsign} Taking off Runway {rwyStr}");
+            }            
 
             return true;
         }

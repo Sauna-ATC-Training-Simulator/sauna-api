@@ -4,14 +4,14 @@ using AviationCalcUtilNet.Units;
 using NavData_Interface.Objects.Fixes;
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Text;
+using Microsoft.Data.Sqlite;
 
 namespace NavData_Interface.DataSources.DFDUtility.Factory
 {
     internal static class RunwayFactory
     {
-        internal static Runway Factory(SQLiteDataReader reader)
+        internal static Runway Factory(SqliteDataReader reader)
         {
             GeoPoint location = SQLHelper.locationFromColumns(reader, "runway_latitude", "runway_longitude");
 

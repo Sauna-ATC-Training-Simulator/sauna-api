@@ -4,14 +4,14 @@ using NavData_Interface.Objects.Fixes.Waypoints;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data.SQLite;
 using System.Text;
+using Microsoft.Data.Sqlite;
 
-namespace NavData_Interface.DataSources.DFDUtility
+namespace NavData_Interface.DataSources.DFDUtility  
 {
     internal static class SQLHelper
     {
-        internal static GeoPoint locationFromColumns(SQLiteDataReader reader, string latColumn, string lonColumn)
+        internal static GeoPoint locationFromColumns(SqliteDataReader reader, string latColumn, string lonColumn)
         {
             return new GeoPoint(
                 Latitude.FromDegrees(Double.Parse(reader[latColumn].ToString())),
@@ -19,12 +19,19 @@ namespace NavData_Interface.DataSources.DFDUtility
                 );
         }
 
+        internal static GeoPoint locationFromColumns(SqliteDataReader reader)
+        {
+            return locationFromColumns(reader, "waypoint_latitude", "waypoint_longitude");
+        }
+
         internal static WaypointDescription waypointDescriptionFromDescriptionString(string descriptionString)
         {
-            if (descriptionString.Length != 3)
+            if (descriptionString.Length > 4)
             {
                 throw new FormatException("The waypoint description is invalid because the description field isn't the right length");
             }
+
+            descriptionString = descriptionString.PadRight(3);
 
             bool isEndOfRoute = false;
             bool isFlyOver = false;

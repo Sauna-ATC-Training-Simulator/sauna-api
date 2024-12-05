@@ -260,3 +260,4 @@ paket-files/
 __pycache__/
 *.pyc
 *.s3db
+!e_dfd_2101.s3db
